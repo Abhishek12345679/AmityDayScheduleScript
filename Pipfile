@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+autopep8 = "==1.5.4"
+certifi = "==2020.11.8"
+chardet = "==3.0.4"
+idna = "==2.10"
+pycodestyle = "==2.6.0"
+pyjwt = "==1.7.1"
+pytz = "==2020.4"
+selenium = "==3.141.0"
+six = "==1.15.0"
+toml = "==0.10.2"
+urllib3 = "==1.26.2"
+webdriver-manager = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"

@@ -1,0 +1,4 @@
+.env
+error.log
+out.log
+Pipfile.lock
