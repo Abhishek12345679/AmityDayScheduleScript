@@ -31,19 +31,28 @@ def login(site):
 
     #login-btn click
     browser.find_element_by_class_name("login100-form-btn").click()
-    
-
-    
+     
 def sendMail(schedule:List):
-    currentdatetime = str(datetime.now())
+    
+    daysOfTheWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+    ];
+    
+    currentdatetime = datetime.now().weekday
 
     msg = MIMEMultipart()
-    msg['Subject'] = f'{currentdatetime}\'s Schedule'
+    msg['Subject'] = f'{daysOfTheWeek[currentdatetime]}\'s Schedule'
     msg['From'] = EMAIL
     msg['To'] = EMAIL
 
-    # text = MIMEText(image_name)
-    msg.attach(str(schedule))
+    text = MIMEText(str(schedule))
+    msg.attach(text)
     
     s = smtplib.SMTP('smtp-mail.outlook.com', 587)
 
@@ -126,4 +135,5 @@ if __name__ == "__main__":
     
     #send schedule
     sendMail(schedule_list)
+    
     
