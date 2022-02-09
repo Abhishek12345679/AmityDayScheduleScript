@@ -1,63 +1,50 @@
+from datetime import datetime
 import os
+from typing import List
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 import smtplib
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from selenium.webdriver.chrome.options import Options
-from datetime import datetime
 from webdriver_manager.utils import ChromeType
 from selenium.webdriver.support.wait import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 # login Function
-def login():
-    print('~~Amity Scheduler~~')
-    print('\n')
-    print('started!!')
-
-    site = "https://s.amizone.net/"
+def login(site):
+    print('Amity Schedule Sender \n')
+    
     browser.get(site)
-
     browser.implicitly_wait(5)
 
-    print('Opened Amizone ...')
-    print(f'Entering Login Credentials!')
-
+    print('Entering Login Credentials!')
     print(f'ENROLLMENT_NO: {ENROLLMENT_NO}')
-    print(f'Password: {AMITY_PASSWORD}')
+    print(f'PASSWORD: {AMITY_PASSWORD}')
 
     browser.find_element_by_name(
         '_UserName').send_keys(ENROLLMENT_NO)
 
     browser.find_element_by_name('_Password').send_keys(AMITY_PASSWORD)
 
-    submit_btn = browser.find_element_by_class_name("login100-form-btn")
-    submit_btn.send_keys(Keys.ENTER)
+    #login-btn click
+    browser.find_element_by_class_name("login100-form-btn").click()
+    
 
     
-def sendMail(image):
-    print(f'Email: {EMAIL}')
-    print(f'Password: {EMAIL_PASSWORD}')
-    print(f"Sending Email to {EMAIL}")
-
+def sendMail(schedule:List):
     currentdatetime = str(datetime.now())
-    image_name = currentdatetime[0:currentdatetime.rindex(
-        ':', 0, len(currentdatetime))]
 
     msg = MIMEMultipart()
-    msg['Subject'] = f'Today\'s {image_name} Schedule'
+    msg['Subject'] = f'{currentdatetime}\'s Schedule'
     msg['From'] = EMAIL
     msg['To'] = EMAIL
 
-    text = MIMEText(image_name)
-    msg.attach(text)
-    image = MIMEImage(image, name=f'{image_name}.png')
-    msg.attach(image)
-
+    # text = MIMEText(image_name)
+    msg.attach(str(schedule))
+    
     s = smtplib.SMTP('smtp-mail.outlook.com', 587)
 
     # start TLS for security
@@ -74,8 +61,17 @@ def sendMail(image):
 
     # terminating the session
     s.quit()
-    browser.close()
 
+
+def list2ListOfObjs(lst:List):
+    newList = []
+    for i in range(0,len(lst),2):
+        newList.append({
+            "time":lst[i][0:14],
+            "subject":lst[i][15:],
+            "faculty":lst[i+1]
+        })
+    return newList
 
 def getDaySchedule():
     
@@ -96,7 +92,7 @@ def getDaySchedule():
     
     schedule_list.pop(0)
     
-    # print(f'{schedule_list}')
+    return list2ListOfObjs(schedule_list)
 
 
 if __name__ == "__main__":
@@ -111,6 +107,8 @@ if __name__ == "__main__":
     # replace os.environ.get with your Amity Email Password
     EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
     
+    SITE_URL = "https://s.amizone.net"
+    
     chrome_options = Options()
     # chrome_options.add_argument("--headless")
     chrome_options.add_argument("--window-size=1920,1080")
@@ -119,7 +117,13 @@ if __name__ == "__main__":
 
     browser = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(),
                                options=chrome_options)
-    login()
-    schedule = getDaySchedule()
-    # sendMail(schedule)
+    
+    # auth
+    login(SITE_URL)
+    
+    # get schedule as an object
+    schedule_list = getDaySchedule()
+    
+    #send schedule
+    sendMail(schedule_list)
     
