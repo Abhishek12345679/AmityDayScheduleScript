@@ -2,6 +2,23 @@
 
 Note: This will only work for Amity University Students, i.e., it works if you have amizone and know your username and passsword, and your amity.edu (university email address) and password.
 
+## run via launchd
+
+To bootstrap the process:
+```bash
+sudo launchctl bootstrap gui/<userid> <plist file>
+```
+
+To get the userid run:
+```bash
+id -u <username>
+```
+
+To start the process:
+```bash
+sudo launchctl kickstart -k gui/<userid>/<plist file without the .plist>
+```
+
 ## TODO
 
 - [ ] Add Support for Whatsapp integration
