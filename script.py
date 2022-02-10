@@ -32,7 +32,7 @@ def login(site):
     
     
 def getHTML(schedule:List):
-    start_html = "<div style='background-color:\"red\">"
+    start_html = "<div style='background-color:\"red\"'>"
     end_html = "</div>"
     
     
