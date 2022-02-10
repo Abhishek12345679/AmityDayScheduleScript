@@ -1,12 +1,10 @@
 from datetime import datetime
+from email.message import EmailMessage
 import os
 from typing import List
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.utils import ChromeType
 from selenium.webdriver.support.wait import WebDriverWait 
@@ -31,6 +29,21 @@ def login(site):
 
     #login-btn click
     browser.find_element_by_class_name("login100-form-btn").click()
+    
+    
+def getHTML(schedule:List):
+    start_html = "<div style='background-color:\"red\">"
+    end_html = "</div>"
+    
+    
+    for item in schedule:
+        time = item['time']
+        subject = item['subject']
+        faculty = item['faculty']
+        start_html += f'<h2>{time}</h2><br/><h3>{subject}</h3><br/><p>{faculty}</p>'
+        
+    return start_html + end_html
+    
      
 def sendMail(schedule:List):
     
@@ -44,32 +57,20 @@ def sendMail(schedule:List):
     "Sunday",
     ];
     
-    currentdatetime = datetime.now().weekday
+    currentdatetime = datetime.now().weekday()
 
-    msg = MIMEMultipart()
-    msg['Subject'] = f'{daysOfTheWeek[currentdatetime]}\'s Schedule'
-    msg['From'] = EMAIL
-    msg['To'] = EMAIL
+    email = EmailMessage()
+    email['Subject'] = f'{daysOfTheWeek[currentdatetime]}\'s Schedule'
+    email['From'] = EMAIL
+    email['To'] = EMAIL
 
-    text = MIMEText(str(schedule))
-    msg.attach(text)
+    email.set_content(getHTML(schedule),subtype='html')
     
-    s = smtplib.SMTP('smtp-mail.outlook.com', 587)
-
-    # start TLS for security
-    s.ehlo()
-    s.starttls()
-    s.ehlo()
-
-    # Authentication
-    s.login(EMAIL, EMAIL_PASSWORD)
-
-    # sending the mail
-    s.sendmail(EMAIL,
-               EMAIL,  msg.as_string())
-
-    # terminating the session
-    s.quit()
+    with smtplib.SMTP('smtp-mail.outlook.com', 587) as s:
+        s.starttls()
+        s.login(EMAIL, EMAIL_PASSWORD)
+        s.send_message(email)
+        s.quit()
 
 
 def list2ListOfObjs(lst:List):
@@ -135,5 +136,8 @@ if __name__ == "__main__":
     
     #send schedule
     sendMail(schedule_list)
+    
+    browser.implicitly_wait(5)
+    browser.quit()
     
     

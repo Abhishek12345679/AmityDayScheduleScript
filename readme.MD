@@ -5,7 +5,6 @@ Note: This will only work for Amity University Students, i.e., it works if you h
 ## TODO
 
 - [ ] Add Support for Whatsapp integration
-- [x] Hide Author's personal data
 
 ## How to Use : 
 
