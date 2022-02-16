@@ -1,4 +1,3 @@
 .env
-Pipfile.lock
 _build
 out.log
