@@ -14,7 +14,7 @@ from selenium.webdriver.common.by import By
 # login Function
 
 
-def login(site):
+def login(site, browser):
     print('Amity Schedule Sender \n')
 
     browser.get(site)
@@ -93,7 +93,7 @@ def popModal():
     modal_close_btn.click()
 
 
-def getDaySchedule():
+def getDaySchedule(browser):
 
     # clicking on home li
     WebDriverWait(browser, 20)\
@@ -141,10 +141,10 @@ def main():
         "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
 
     # auth
-    login(SITE_URL)
+    login(SITE_URL, browser)
 
     # get schedule as an object
-    schedule_list = getDaySchedule()
+    schedule_list = getDaySchedule(browser)
 
     # send schedule
     sendMail(schedule_list)
