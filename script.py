@@ -15,20 +15,21 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 # login Function
 
 
-def login(site):
+def login(browser):
     print('Amity Schedule Sender \n')
 
-    browser.get(site)
+    browser.get("https://s.amizone.net")
     browser.implicitly_wait(5)
 
     print('Entering Login Credentials!')
-    print(f'ENROLLMENT_NO: {ENROLLMENT_NO}')
-    print(f'PASSWORD: {AMITY_PASSWORD}')
 
-    browser.find_element_by_name(
-        '_UserName').send_keys(ENROLLMENT_NO)
+    browser\
+        .find_element_by_name('_UserName')\
+        .send_keys(os.environ.get('ENROLLMENT_NO'))
 
-    browser.find_element_by_name('_Password').send_keys(AMITY_PASSWORD)
+    browser\
+        .find_element_by_name('_Password')\
+        .send_keys(os.environ.get('AMITY_PASSWORD'))
 
     # login-btn click
     browser.find_element_by_class_name("login100-form-btn").click()
@@ -48,6 +49,9 @@ def getHTML(schedule: List):
 
 
 def sendMail(schedule: List):
+
+    EMAIL = os.environ.get('EMAIL')
+    EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
     daysOfTheWeek = [
         "Monday",
@@ -86,7 +90,7 @@ def list2ListOfObjs(lst: List):
     return newList
 
 
-def popModal():
+def popModal(browser):
     # closing modal
     browser.implicitly_wait(20)
     modal_close_btn = browser.find_element_by_xpath(
@@ -94,7 +98,7 @@ def popModal():
     modal_close_btn.click()
 
 
-def getDaySchedule():
+def getDaySchedule(browser):
 
     # clicking on home li
     WebDriverWait(browser, 20)\
@@ -113,18 +117,21 @@ def getDaySchedule():
     return list2ListOfObjs(schedule_list)
 
 
-def main():
-    # replace os.environ.get with your enrollment number
-    ENROLLMENT_NO = os.getenv('ENROLLMENT_NO')
-    # replace os.environ.get with your enrollment password
-    AMITY_PASSWORD = os.getenv('AMITY_PASSWORD')
+def main(browser):
+    # auth
+    login(browser)
 
-    # replace os.environ.get with your Amity Email Address
-    EMAIL = os.environ.get('EMAIL')
-    # replace os.environ.get with your Amity Email Password
-    EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+    # get schedule as an object
+    schedule_list = getDaySchedule(browser)
 
-    SITE_URL = "https://s.amizone.net"
+    # send schedule
+    sendMail(schedule_list)
+
+    browser.implicitly_wait(5)
+    browser.quit()
+
+
+if __name__ == "__main__":
 
     chrome_options = Options()
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -141,31 +148,16 @@ def main():
     browser = webdriver.Chrome(executable_path=os.environ.get(
         "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
 
-    # auth
-    login(SITE_URL)
-
-    # get schedule as an object
-    schedule_list = getDaySchedule()
-
-    # send schedule
-    sendMail(schedule_list)
-
-    browser.implicitly_wait(5)
-    browser.quit()
-
-
-if __name__ == "__main__":
-
     sched = BlockingScheduler()
 
     @sched.scheduled_job('interval', minutes=5)
     def timed_job():
         print('This job is run every five minutes.')
-        main()
+        main(browser)
 
-    @sched.scheduled_job('cron', day_of_week='mon-fri', hour=7)
-    def scheduled_job():
-        print('This job is run every weekday at 0730.')
-        main()
+    # @sched.scheduled_job('cron', day_of_week='mon-fri', hour=7)
+    # def scheduled_job():
+    #     print('This job is run every weekday at 0730.')
+    #     main(browser)
 
     sched.start()
