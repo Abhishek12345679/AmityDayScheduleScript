@@ -85,6 +85,14 @@ def list2ListOfObjs(lst: List):
     return newList
 
 
+def popModal():
+    # closing modal
+    browser.implicitly_wait(20)
+    modal_close_btn = browser.find_element_by_xpath(
+        "/html/body/div[3]/div/div[2]/div[2]/div/div/div[1]/button")
+    modal_close_btn.click()
+
+
 def getDaySchedule():
 
     # clicking on home li
@@ -92,11 +100,7 @@ def getDaySchedule():
         .until(EC.element_to_be_clickable((By.CLASS_NAME, "nav-list > li:first-child > a")))\
         .click()
 
-    # closing the students welfare department modal
-    browser.implicitly_wait(20)
-    modal_close_btn = browser.find_element_by_xpath(
-        "/html/body/div[3]/div/div[2]/div[2]/div/div/div[1]/button")
-    modal_close_btn.click()
+    # popModal()
 
     schedule_list = browser\
         .find_element_by_xpath("/html/body/div[3]/div/div[2]/div[1]/div/div[2]/div/div/div/div[7]/div[1]/div/div/div/div[2]/div/div[2]/div/div/table")\
@@ -123,20 +127,19 @@ if __name__ == "__main__":
     SITE_URL = "https://s.amizone.net"
 
     chrome_options = Options()
+    # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     # chrome_options.add_argument("--headless")
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
+    # chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--window-size=1920,1080")
     chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--disable-dev-shm-usage")
+    # chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--window-size=2560,1600")
 
-    # browser = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(),
-    #                            options=chrome_options)
+    browser = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(),
+                               options=chrome_options)
 
-    browser = webdriver.Chrome(executable_path=os.environ.get(
-        "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+    # browser = webdriver.Chrome(executable_path=os.environ.get(
+    #     "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
 
     # auth
     login(SITE_URL)
