@@ -24,15 +24,15 @@ def login(browser):
     print('Entering Login Credentials!')
 
     browser\
-        .find_element_by_name('_UserName')\
+        .find_element(by=By.NAME, value='_UserName')\
         .send_keys(os.environ.get('ENROLLMENT_NO'))
 
     browser\
-        .find_element_by_name('_Password')\
+        .find_element(by=By.NAME, value='_Password')\
         .send_keys(os.environ.get('AMITY_PASSWORD'))
 
     # login-btn click
-    browser.find_element_by_class_name("login100-form-btn").click()
+    browser.find_element(by=By.CLASS_NAME, value='login100-form-btn').click()
 
 
 def getHTML(schedule: List):
@@ -93,8 +93,8 @@ def list2ListOfObjs(lst: List):
 def popModal(browser):
     # closing modal
     browser.implicitly_wait(20)
-    modal_close_btn = browser.find_element_by_xpath(
-        "/html/body/div[3]/div/div[2]/div[2]/div/div/div[1]/button")
+    modal_close_btn = browser\
+        .find_element(By.XPATH, value="/html/body/div[3]/div/div[2]/div[2]/div/div/div[1]/button")
     modal_close_btn.click()
 
 
@@ -108,7 +108,7 @@ def getDaySchedule(browser):
     # popModal()
 
     schedule_list = browser\
-        .find_element_by_xpath("/html/body/div[3]/div/div[2]/div[1]/div/div[2]/div/div/div/div[7]/div[1]/div/div/div/div[2]/div/div[2]/div/div/table")\
+        .find_element(By.XPATH, "/html/body/div[3]/div/div[2]/div[1]/div/div[2]/div/div/div/div[7]/div[1]/div/div/div/div[2]/div/div[2]/div/div/table")\
         .text\
         .split('\n')
 
@@ -127,8 +127,8 @@ def main(browser):
     # send schedule
     sendMail(schedule_list)
 
-    browser.implicitly_wait(5)
-    browser.quit()
+    # browser.implicitly_wait(5)
+    # browser.quit()
 
 
 if __name__ == "__main__":
