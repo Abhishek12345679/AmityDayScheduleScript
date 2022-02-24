@@ -112,8 +112,7 @@ def getDaySchedule():
     return list2ListOfObjs(schedule_list)
 
 
-if __name__ == "__main__":
-
+def main():
     # replace os.environ.get with your enrollment number
     ENROLLMENT_NO = os.getenv('ENROLLMENT_NO')
     # replace os.environ.get with your enrollment password

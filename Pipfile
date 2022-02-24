@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 selenium = "==3.141.0"
 webdriver-manager = "*"
+apscheduler = "*"
 
 [dev-packages]
 
