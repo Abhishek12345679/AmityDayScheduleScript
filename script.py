@@ -10,11 +10,12 @@ from webdriver_manager.utils import ChromeType
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 # login Function
 
 
-def login(site, browser):
+def login(site):
     print('Amity Schedule Sender \n')
 
     browser.get(site)
@@ -93,7 +94,7 @@ def popModal():
     modal_close_btn.click()
 
 
-def getDaySchedule(browser):
+def getDaySchedule():
 
     # clicking on home li
     WebDriverWait(browser, 20)\
@@ -141,13 +142,30 @@ def main():
         "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
 
     # auth
-    login(SITE_URL, browser)
+    login(SITE_URL)
 
     # get schedule as an object
-    schedule_list = getDaySchedule(browser)
+    schedule_list = getDaySchedule()
 
     # send schedule
     sendMail(schedule_list)
 
     browser.implicitly_wait(5)
     browser.quit()
+
+
+if __name__ == "__main__":
+
+    sched = BlockingScheduler()
+
+    @sched.scheduled_job('interval', minutes=5)
+    def timed_job():
+        print('This job is run every five minutes.')
+        main()
+
+    @sched.scheduled_job('cron', day_of_week='mon-fri', hour=7)
+    def scheduled_job():
+        print('This job is run every weekday at 0730.')
+        main()
+
+    sched.start()
