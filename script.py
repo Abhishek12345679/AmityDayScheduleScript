@@ -155,7 +155,8 @@ if __name__ == "__main__":
     #     print('This job is run every five minutes.')
     #     main(browser)
 
-    @sched.scheduled_job('cron', day_of_week='mon-fri', hour=7)
+    # hour should be in UTC (2 am UTC = 7:30 am IST)
+    @sched.scheduled_job('cron', day_of_week='mon-fri', hour=2)
     def scheduled_job():
         print('This job is run every weekday at 7 am.')
         main(browser)
