@@ -128,7 +128,7 @@ def main(browser):
     sendMail(schedule_list)
 
     # browser.implicitly_wait(5)
-    # browser.quit()
+    browser.quit()
 
 
 if __name__ == "__main__":
