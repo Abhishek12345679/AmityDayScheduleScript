@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import date
 from email.message import EmailMessage
 import os
 from typing import List
@@ -50,7 +51,7 @@ def getHTML(schedule: List):
 
 
 def formatList(schedule: List):
-    message = ""
+    message = f"*{date.today().strftime('%B %d, %Y').strip()}*\n\n"
     for item in schedule:
         time = item['time']
         subject = item['subject']
