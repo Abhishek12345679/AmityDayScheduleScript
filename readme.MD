@@ -21,7 +21,7 @@ sudo launchctl kickstart -k gui/<userid>/<plist file without the .plist>
 
 ## TODO
 
-- [ ] Add Support for Whatsapp integration
+- [x] Add Support for Whatsapp integration
 
 ## How to Use : 
 

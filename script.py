@@ -12,10 +12,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-# login Function
+import whatsapp
 
 
 def login(browser):
+    # login Function
     print('Amity Schedule Sender \n')
 
     browser.get("https://s.amizone.net")
@@ -46,6 +47,18 @@ def getHTML(schedule: List):
         start_html += f'<h2>{time}</h2><br/><h3>{subject}</h3><br/><p>{faculty}</p>'
 
     return start_html + end_html
+
+
+def formatList(schedule: List):
+    message = ""
+    for item in schedule:
+        time = item['time']
+        subject = item['subject']
+        faculty = item['faculty']
+        message += f"⏰ *{time.strip()}*\n"
+        message += f"📚 *{subject.strip()}*\n"
+        message += f"🧑‍🏫 _{faculty.strip()}_\n\n"
+    return message
 
 
 def sendMail(schedule: List):
@@ -125,7 +138,8 @@ def main(browser):
     schedule_list = getDaySchedule(browser)
 
     # send schedule
-    sendMail(schedule_list)
+    # sendMail(schedule_list)
+    whatsapp.sendMessage(formatList(schedule_list))
 
     # browser.implicitly_wait(5)
     browser.quit()
@@ -144,6 +158,8 @@ if __name__ == "__main__":
 
     # browser = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(),
     #                            options=options)
+
+    # main(browser)
 
     browser = webdriver.Chrome(executable_path=os.environ.get(
         "CHROMEDRIVER_PATH"), options=options)

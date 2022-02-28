@@ -7,6 +7,7 @@ name = "pypi"
 webdriver-manager = "*"
 apscheduler = "*"
 selenium = "==4.1.1"
+twilio = "*"
 
 [dev-packages]
 
