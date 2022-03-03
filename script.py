@@ -139,8 +139,8 @@ def main(browser):
     schedule_list = getDaySchedule(browser)
 
     # send schedule
-    # sendMail(schedule_list)
-    whatsapp.sendMessage(formatList(schedule_list))
+    sendMail(schedule_list)
+    # whatsapp.sendMessage(formatList(schedule_list))
 
     # browser.implicitly_wait(5)
     browser.quit()
